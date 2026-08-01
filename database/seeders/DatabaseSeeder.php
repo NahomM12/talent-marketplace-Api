@@ -20,7 +20,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(ServiceSeeder::class);
+        $this->call([
+            ServiceSeeder::class,
+            SuperadminSeeder::class,
+        ]);
 
         // 8 professionals spread deliberately across the 6 services (2,2,1,1,1,1)
         // so every service has talent to build against.
