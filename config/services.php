@@ -35,4 +35,21 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Next.js Revalidation Webhook
+    |--------------------------------------------------------------------------
+    |
+    | After an admin mutates talent/portfolio data, RevalidationService POSTs the
+    | affected ISR tags to the Next.js app's /api/revalidate route so the
+    | frontend regenerates the changed pages. The URL is left blank by default;
+    | the service no-ops (and logs) when it is unset — flip it on once the
+    | frontend phase ships a matching endpoint.
+    |
+    */
+    'revalidation' => [
+        'url' => env('NEXTJS_REVALIDATE_URL'),
+        'secret' => env('REVALIDATE_SECRET'),
+    ],
+
 ];
