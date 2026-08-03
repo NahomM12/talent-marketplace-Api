@@ -2,7 +2,7 @@
 
 Reference doc for build. Companion to the system architecture diagram discussed in chat.
 
-Stack: **Laravel 11 (API only) + Next.js 14 (App Router) + MySQL**, connected over Sanctum, one Next.js app for both public and admin routes.
+Stack: **Laravel 13 (API only) + Next.js 16 (App Router) + React 19 + MySQL**, connected over Sanctum, one Next.js app for both public and admin routes.
 
 ---
 
@@ -217,7 +217,7 @@ DELETE /api/admin/admins/{id}
 ## 3. Next.js structure (App Router)
 
 ```
-app/
+app/                                    Routes ONLY — no shared code lives here
 ├── (public)/
 │   ├── page.tsx                       Home
 │   ├── services/
@@ -248,21 +248,47 @@ app/
 │       ├── page.tsx
 │       └── new/page.tsx
 │
-├── api/
-│   └── revalidate/route.ts               Receives Laravel's webhook, calls revalidatePath()
-│
-├── middleware.ts                          Gates /admin/* — checks auth cookie, redirects to /admin/login
-│
-├── components/
-│   ├── public/                           ServiceCard, ProfessionalCard, PortfolioGrid, ...
-│   ├── admin/                             DataTable, FormField, MediaUploader, ...
-│   └── ui/                                shared primitives (Button, Input, Badge...)
-│
-└── lib/
-    ├── api.ts                             fetch wrapper: base URL, error handling, auth header
-    ├── auth.ts                             admin session helpers (cookie read/verify)
-    └── types.ts                            shared TS types matching Laravel API Resources
+└── api/
+    └── revalidate/route.ts               Receives Laravel's webhook, calls revalidatePath()
+
+middleware.ts                             Gates /admin/* by checking the
+                                           admin_token cookie (Next.js's own
+                                           domain — see auth note below)
+
+lib/                                      Shared code lives at project root, imported as @/lib/...
+├── api.ts                                PUBLIC endpoints only — fetch wrapper, error handling
+├── admin-api.ts                          Server-only — adminFetch() helper, reads admin_token
+│                                          cookie, attaches Bearer header, calls Laravel
+└── types.ts                              shared TS types matching Laravel API Resources
+
+components/                               Also at project root, imported as @/components/...
+├── public/                               ServiceCard, ProfessionalCard, PortfolioGrid, ...
+├── admin/                                 DataTable, FormField, MediaUploader, ...
+└── ui/                                    shared primitives (Button, Input, Badge...)
 ```
+
+**Admin auth note:** the backend (Laravel on a Herd `.test` domain) and
+frontend (Next.js on its own domain) are genuinely different sites — not
+just different ports. This rules out cookie-based Sanctum SPA auth for the
+admin panel entirely: browsers strictly forbid JavaScript on one origin
+from reading a cookie belonging to another origin, which makes the CSRF
+double-submit pattern structurally impossible here, not just awkward to
+configure. Because of this, the admin panel uses **token-based auth**:
+Laravel issues a Sanctum personal access token on login; Next.js stores it
+in an `httpOnly` cookie scoped to its own domain (readable by Next.js's
+server, never by browser JS); every admin-authenticated call goes through
+Next.js's own Route Handlers/Server Actions (via `lib/admin-api.ts`),
+which attach the token as `Authorization: Bearer` when calling Laravel
+server-to-server — the browser never talks to Laravel directly for
+anything admin-related. This lets `middleware.ts` and Server Components
+work normally for the admin panel, since the cookie middleware reads
+belongs to Next.js's own domain.
+
+Note: this project's tsconfig.json path alias is `"@/*": ["./*"]` — rooted at
+the project root, not inside app/. Keeping lib/ and components/ as siblings
+of app/ (rather than nested inside it) means imports read as `@/lib/api` and
+`@/components/ui/Button`, matching that alias and standard Next.js
+convention. app/ is reserved for routing only.
 
 **Middleware note (`middleware.ts`):** this is the Next.js equivalent of your Laravel `auth:admin` middleware, but it runs at the edge before any page renders. It checks for a valid session cookie (set by Laravel via Sanctum on login) and redirects to `/admin/login` if missing — same mental model as what you already do in Laravel, just a different file and runtime.
 
