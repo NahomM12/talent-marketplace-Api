@@ -7,9 +7,10 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Resources\AdminResource;
+use App\Models\Admin;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,25 +18,19 @@ class AuthController extends Controller
 {
     public function login(LoginRequest $request): JsonResponse
     {
-        // sanctum guard uses session + admins provider; attempt() is the idiomatic login path for SPA cookie auth.
-        if (! Auth::guard('sanctum')->attempt($request->only('email', 'password'))) {
+        // The 'sanctum' guard (driver: sanctum) is a RequestGuard — built to
+        // RESOLVE an already-authenticated request from a token, not to
+        // perform a credentials-based login. It has no attempt()/logout()
+        // support, so credential verification is done manually here instead.
+        $admin = Admin::where('email', $request->string('email'))->first();
+
+        if (! $admin || ! Hash::check($request->string('password'), $admin->password)) {
             return new JsonResponse(
                 ['message' => 'Invalid credentials.'],
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }
 
-        if ($request->hasSession()) {
-            $request->session()->regenerate();
-        }
-
-        /** @var \App\Models\Admin $admin */
-        $admin = Auth::guard('sanctum')->user();
-
-        // Also issue a personal access token for the frontend's token-based
-        // admin auth flow (browser cross-origin cookie auth isn't viable here
-        // — see gm-bridge-technical-architecture.md's admin auth note). The
-        // session-based login above is left intact as a fallback/rollback path.
         $token = $admin->createToken('admin-panel')->plainTextToken;
 
         return new JsonResponse([
@@ -52,19 +47,11 @@ class AuthController extends Controller
             $currentToken = $user->currentAccessToken();
 
             // currentAccessToken() returns a real PersonalAccessToken when the
-            // request was authenticated via Bearer token, or a TransientToken
-            // (no delete() support) when authenticated via session — only
-            // revoke the former.
+            // request was authenticated via Bearer token — the only auth
+            // method this app uses now. Guard against anything else defensively.
             if ($currentToken instanceof PersonalAccessToken) {
                 $currentToken->delete();
             }
-        }
-
-        Auth::guard('sanctum')->logout();
-
-        if ($request->hasSession()) {
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
         }
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);

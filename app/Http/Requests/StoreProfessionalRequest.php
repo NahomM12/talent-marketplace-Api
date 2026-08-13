@@ -44,4 +44,15 @@ class StoreProfessionalRequest extends FormRequest
             )
         );
     }
+    protected function prepareForValidation(): void
+{
+    if ($this->has('skills') && is_string($this->input('skills'))) {
+        $this->merge([
+            'skills' => array_values(array_filter(array_map(
+                'trim',
+                explode(',', $this->input('skills'))
+            ))),
+        ]);
+    }
+}
 }

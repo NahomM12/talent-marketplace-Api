@@ -24,7 +24,8 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         ->only(['index', 'store', 'update', 'destroy'])
         ->parameters(['portfolio' => 'id']);
 });
-
+Route::get('/professionals/{id}', [ProfessionalController::class, 'show'])->name('professionals.show');
+Route::get('/portfolio/{id}', [PortfolioItemController::class, 'show'])->name('portfolio.show');
 Route::middleware(['auth:sanctum', 'superadmin'])->group(function () {
     // Superadmin-only: manage admin accounts.
     Route::apiResource('admins', AdminUserController::class)

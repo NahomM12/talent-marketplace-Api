@@ -33,7 +33,12 @@ class ProfessionalController extends Controller
             Professional::query()->with('service')->orderBy('id')->get()
         );
     }
+public function show(int $id): ProfessionalResource
+{
+    $professional = Professional::with(['service', 'portfolioItems'])->findOrFail($id);
 
+    return new ProfessionalResource($professional);
+}
     public function store(StoreProfessionalRequest $request): JsonResponse
     {
         $data = $request->validated();

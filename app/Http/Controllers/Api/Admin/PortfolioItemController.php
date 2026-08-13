@@ -34,7 +34,12 @@ class PortfolioItemController extends Controller
                 ->get()
         );
     }
+public function show(int $id): PortfolioItemResource
+{
+    $portfolioItem = PortfolioItem::with(['professional', 'service'])->findOrFail($id);
 
+    return new PortfolioItemResource($portfolioItem);
+}
     public function store(StorePortfolioItemRequest $request): JsonResponse
     {
         $data = $request->safe()->except(['image', 'pdf', 'youtube_url']);

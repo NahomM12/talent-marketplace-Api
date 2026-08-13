@@ -25,3 +25,10 @@ Route::get('/portfolio/{portfolioItem}', [PortfolioItemController::class, 'show'
 Route::post('/contact', [ContactMessageController::class, 'store'])->name('contact.store');
 
 Route::prefix('admin')->group(base_path('routes/admin.php'));
+Route::middleware('auth:sanctum')->get('/debug-auth-user', function (\Illuminate\Http\Request $request) {
+    $user = $request->user();
+    return response()->json([
+        'user' => $user,
+        'user_class' => $user ? get_class($user) : null,
+    ]);
+});
