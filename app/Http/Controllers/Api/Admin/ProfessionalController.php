@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProfessionalRequest;
 use App\Http\Requests\UpdateProfessionalRequest;
+use App\Http\Resources\ProfessionalListResource;
 use App\Http\Resources\ProfessionalResource;
 use App\Models\Professional;
 use App\Services\RevalidationService;
@@ -29,7 +30,7 @@ class ProfessionalController extends Controller
     public function index(): AnonymousResourceCollection
     {
         // Admin sees every professional, including inactive ones (unlike the public API).
-        return ProfessionalResource::collection(
+        return ProfessionalListResource::collection(
             Professional::query()->with('service')->orderBy('id')->get()
         );
     }

@@ -28,6 +28,7 @@ class ProfessionalListResource extends JsonResource
                 fn (): string => $this->service->name,
             ),
             'is_featured' => $this->is_featured,
+            'status' => $this->status,
         ];
     }
 }
