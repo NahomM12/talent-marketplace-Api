@@ -53,6 +53,12 @@ class ServiceSeeder extends Seeder
                 'description' => 'Accurate, culturally aware translation and localization across major global languages.',
                 'icon' => 'globe',
             ],
+            [
+              'name' => 'English as a Second Language (ESL)',
+              'slug' => 'english-as-a-second-language',
+              'description' => 'Practical English instruction for learners looking to improve their speaking, writing, reading, listening, and overall communication skills.',
+              'icon' => 'languages',
+            ],
         ];
 
         foreach ($services as $service) {
