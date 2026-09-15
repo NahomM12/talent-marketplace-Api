@@ -17,12 +17,12 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     // Talent CRUD (index/store/update/destroy — no single-item GET, per the architecture doc).
     Route::apiResource('professionals', ProfessionalController::class)
         ->only(['index', 'store', 'update', 'destroy'])
-        ->parameters(['professionals' => 'id']) ->names('admin.professionals');;
+        ->parameters(['professionals' => 'id']) ->names('admin.professionals');
 
     // Portfolio CRUD.
     Route::apiResource('portfolio', PortfolioItemController::class)
         ->only(['index', 'store', 'update', 'destroy'])
-        ->parameters(['portfolio' => 'id']);
+        ->parameters(['portfolio' => 'id']) ->names('admin.portfolio');
 });
 Route::get('/professionals/{id}', [ProfessionalController::class, 'show'])->name('professionals.show');
 Route::get('/portfolio/{id}', [PortfolioItemController::class, 'show'])->name('portfolio.show');
