@@ -23,7 +23,7 @@ return [
 
     'allowed_origins' => array_map(
         trim(...),
-        explode(',', (string) env('CORS_ALLOWED_ORIGINS', 'http://localhost:3000')),
+        explode(',', (string) env('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,https://talent-marketplace-frontend.vercel.app')),
     ),
 
     'allowed_origins_patterns' => [],
