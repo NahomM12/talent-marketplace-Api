@@ -17,7 +17,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     // Talent CRUD (index/store/update/destroy — no single-item GET, per the architecture doc).
     Route::apiResource('professionals', ProfessionalController::class)
         ->only(['index', 'store', 'update', 'destroy'])
-        ->parameters(['professionals' => 'id']);
+        ->parameters(['professionals' => 'id']) ->names('admin.professionals');;
 
     // Portfolio CRUD.
     Route::apiResource('portfolio', PortfolioItemController::class)
