@@ -8,27 +8,34 @@ use App\Http\Controllers\Api\Admin\PortfolioItemController;
 use App\Http\Controllers\Api\Admin\ProfessionalController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->name('admin.login');
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/me', [AuthController::class, 'me']);
+    Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout');
+    Route::get('/me', [AuthController::class, 'me'])->name('admin.me');
 
-    // Talent CRUD (index/store/update/destroy — no single-item GET, per the architecture doc).
+    // Admin Talent CRUD
     Route::apiResource('professionals', ProfessionalController::class)
         ->only(['index', 'store', 'update', 'destroy'])
-        ->parameters(['professionals' => 'id']) ->names('admin.professionals');
+        ->parameters(['professionals' => 'id'])
+        ->names('admin.professionals');
 
-    // Portfolio CRUD.
+    // Admin Portfolio CRUD
     Route::apiResource('portfolio', PortfolioItemController::class)
         ->only(['index', 'store', 'update', 'destroy'])
-        ->parameters(['portfolio' => 'id']) ->names('admin.portfolio');
+        ->parameters(['portfolio' => 'id'])
+        ->names('admin.portfolio');
+
+    // Admin-only show routes — RENAMED to avoid conflict
+    Route::get('/professionals/{id}', [ProfessionalController::class, 'show'])
+        ->name('admin.professionals.show');
+    Route::get('/portfolio/{id}', [PortfolioItemController::class, 'show'])
+        ->name('admin.portfolio.show');
 });
-Route::get('/professionals/{id}', [ProfessionalController::class, 'show'])->name('professionals.show');
-Route::get('/portfolio/{id}', [PortfolioItemController::class, 'show'])->name('portfolio.show');
+
 Route::middleware(['auth:sanctum', 'superadmin'])->group(function () {
-    // Superadmin-only: manage admin accounts.
     Route::apiResource('admins', AdminUserController::class)
         ->only(['index', 'store', 'update', 'destroy'])
-        ->parameters(['admins' => 'id']);
+        ->parameters(['admins' => 'id'])
+        ->names('superadmin.admins');
 });
