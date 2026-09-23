@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\Admin\AdminUserController;
 use App\Http\Controllers\Api\Admin\AuthController;
+use App\Http\Controllers\Api\Admin\ContactMessageController;
 use App\Http\Controllers\Api\Admin\PortfolioItemController;
 use App\Http\Controllers\Api\Admin\ProfessionalController;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +32,14 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         ->name('admin.professionals.show');
     Route::get('/portfolio/{id}', [PortfolioItemController::class, 'show'])
         ->name('admin.portfolio.show');
+
+    // Admin Contact Message management
+    Route::get('/contact-messages', [ContactMessageController::class, 'index'])
+        ->name('admin.contact-messages.index');
+    Route::get('/contact-messages/{id}', [ContactMessageController::class, 'show'])
+        ->name('admin.contact-messages.show');
+    Route::delete('/contact-messages/{id}', [ContactMessageController::class, 'destroy'])
+        ->name('admin.contact-messages.destroy');
 });
 
 Route::middleware(['auth:sanctum', 'superadmin'])->group(function () {
