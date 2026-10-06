@@ -13,6 +13,7 @@ class PortfolioFilterService
     public function paginateFiltered(Request $request, int $perPage = 10): LengthAwarePaginator
     {
         $query = PortfolioItem::query()
+            ->whereHas('service', fn ($serviceQuery) => $serviceQuery->where('is_active', true))
             ->with(['professional', 'service'])
             ->orderByDesc('id');
 

@@ -17,6 +17,7 @@ class ProfessionalController extends Controller
     {
         $query = Professional::query()
             ->where('status', 'active')
+            ->whereHas('service', fn ($serviceQuery) => $serviceQuery->where('is_active', true))
             ->with('service')
             ->orderBy('name');
 
@@ -32,6 +33,12 @@ class ProfessionalController extends Controller
 
     public function show(Professional $professional): ProfessionalResource
     {
+        $professional->loadMissing('service');
+
+        if ($professional->service->is_active === false) {
+            abort(404);
+        }
+
         if ($professional->status !== 'active') {
             abort(404);
         }

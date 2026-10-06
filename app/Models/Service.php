@@ -8,17 +8,31 @@ use Database\Factories\ServiceFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['name', 'slug', 'description', 'icon'])]
+#[Fillable(['name', 'slug', 'description', 'icon', 'is_active', 'inclusions'])]
 #[RouteKey('slug')]
 #[UseFactory(ServiceFactory::class)]
 class Service extends Model
 {
     /** @use HasFactory<ServiceFactory> */
     use HasFactory;
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'inclusions' => AsArrayObject::class,
+            'is_active' => 'boolean',
+        ];
+    }
 
     /**
      * Professionals grouped under this service.

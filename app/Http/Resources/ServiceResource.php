@@ -20,6 +20,8 @@ class ServiceResource extends JsonResource
             'slug' => $this->slug,
             'description' => $this->description,
             'icon' => $this->icon,
+            'is_active' => $this->is_active,
+            'inclusions' => $this->inclusions !== null ? array_values((array) $this->inclusions) : [],
         ];
     }
 }

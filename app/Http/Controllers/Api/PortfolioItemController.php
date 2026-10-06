@@ -28,6 +28,10 @@ class PortfolioItemController extends Controller
     {
         $portfolioItem->load(['professional', 'service']);
 
+        if ($portfolioItem->service->is_active === false) {
+            abort(404);
+        }
+
         return new PortfolioItemResource($portfolioItem);
     }
 }

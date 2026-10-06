@@ -27,6 +27,11 @@ class ServiceFactory extends Factory
             'slug' => Str::slug($name),
             'description' => $this->faker->sentence(12),
             'icon' => $this->faker->optional()->word(),
+            'is_active' => true,
+            'inclusions' => $this->faker->randomElements(
+                ['Planning and consultation', 'Dedicated project support', 'Quality review', 'Final deliverables'],
+                $this->faker->numberBetween(3, 4),
+            ),
         ];
     }
 }

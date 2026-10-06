@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Admin\AuthController;
 use App\Http\Controllers\Api\Admin\ContactMessageController;
 use App\Http\Controllers\Api\Admin\PortfolioItemController;
 use App\Http\Controllers\Api\Admin\ProfessionalController;
+use App\Http\Controllers\Api\Admin\ServiceController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login'])->name('admin.login');
@@ -14,6 +15,11 @@ Route::post('/login', [AuthController::class, 'login'])->name('admin.login');
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout');
     Route::get('/me', [AuthController::class, 'me'])->name('admin.me');
+
+    Route::apiResource('services', ServiceController::class)
+        ->only(['index', 'store', 'update', 'destroy'])
+        ->parameters(['services' => 'id'])
+        ->names('admin.services');
 
     // Admin Talent CRUD
     Route::apiResource('professionals', ProfessionalController::class)

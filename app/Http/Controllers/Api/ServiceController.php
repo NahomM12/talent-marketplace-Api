@@ -13,13 +13,17 @@ class ServiceController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-        $services = Service::query()->orderBy('name')->get();
+        $services = Service::query()->where('is_active', true)->orderBy('name')->get();
 
         return ServiceResource::collection($services);
     }
 
     public function show(Service $service): ServiceResource
     {
+        if ($service->is_active === false) {
+            abort(404);
+        }
+
         return new ServiceResource($service);
     }
 }
