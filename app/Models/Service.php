@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['name', 'slug', 'description', 'icon', 'is_active', 'inclusions'])]
+#[Fillable(['name', 'slug', 'description', 'is_active', 'type', 'inclusions'])]
 #[RouteKey('slug')]
 #[UseFactory(ServiceFactory::class)]
 class Service extends Model

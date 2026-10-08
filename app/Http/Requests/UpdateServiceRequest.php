@@ -26,7 +26,7 @@ class UpdateServiceRequest extends FormRequest
             'name' => ['sometimes', 'required', 'string', 'max:255'],
             'slug' => ['sometimes', 'required', 'string', 'max:255', Rule::unique('services', 'slug')->ignore($this->route('id'))],
             'description' => ['sometimes', 'required', 'string'],
-            'icon' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'type' => ['sometimes', 'required', 'string', Rule::in(['remote_talent', 'managed_services'])],
             'is_active' => ['sometimes', 'boolean'],
             'inclusions' => ['sometimes', 'nullable', 'array'],
             'inclusions.*' => ['required', 'string', 'max:255'],

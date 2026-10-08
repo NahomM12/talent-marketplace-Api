@@ -26,7 +26,7 @@ class ServiceFactory extends Factory
             'name' => $name,
             'slug' => Str::slug($name),
             'description' => $this->faker->sentence(12),
-            'icon' => $this->faker->optional()->word(),
+            'type' => $this->faker->randomElement(['remote_talent', 'managed_services']),
             'is_active' => true,
             'inclusions' => $this->faker->randomElements(
                 ['Planning and consultation', 'Dedicated project support', 'Quality review', 'Final deliverables'],

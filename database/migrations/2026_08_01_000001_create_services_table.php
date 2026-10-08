@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
-            $table->string('icon')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->enum('type', ['remote_talent', 'managed_services'])->default('remote_talent');
             $table->json('inclusions')->nullable();
             $table->timestamps();
         });

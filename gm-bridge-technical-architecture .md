@@ -14,7 +14,9 @@ services
 ├── name              e.g. "Video Editing"
 ├── slug              unique, used in URLs
 ├── description
-├── icon               (svg name or key)
+├── is_active          boolean, default true
+├── type               enum: remote_talent | Managed_services, default remote_talent
+├── inclusions         nullable json array
 └── timestamps
 
 professionals

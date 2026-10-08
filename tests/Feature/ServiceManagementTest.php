@@ -20,10 +20,11 @@ it('manages services and hides inactive service content from public endpoints on
         'name' => 'Editorial Design',
         'slug' => 'editorial-design',
         'description' => 'Editorial design and production support.',
-        'icon' => 'pen-tool',
+        'type' => 'managed_services',
         'is_active' => false,
         'inclusions' => 'Layout design, Print-ready files, Proofreading',
     ])->assertCreated()
+        ->assertJsonPath('data.type', 'managed_services')
         ->assertJsonPath('data.is_active', false)
         ->assertJsonPath('data.inclusions', ['Layout design', 'Print-ready files', 'Proofreading']);
 
@@ -63,8 +64,9 @@ it('manages services and hides inactive service content from public endpoints on
     $this->getJson('/api/admin/portfolio')->assertOk()->assertJsonFragment(['id' => $portfolioItem->id]);
     $this->getJson('/api/admin/portfolio/'.$portfolioItem->id)->assertOk();
 
-    $this->putJson('/api/admin/services/'.$serviceId, ['is_active' => true])
+    $this->putJson('/api/admin/services/'.$serviceId, ['is_active' => true, 'type' => 'remote_talent'])
         ->assertOk()
+        ->assertJsonPath('data.type', 'remote_talent')
         ->assertJsonPath('data.is_active', true);
 
     expect(collect($this->getJson('/api/services')->json('data'))->pluck('id')->all())

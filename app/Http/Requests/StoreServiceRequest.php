@@ -26,7 +26,7 @@ class StoreServiceRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255', Rule::unique('services', 'slug')],
             'description' => ['required', 'string'],
-            'icon' => ['nullable', 'string', 'max:255'],
+            'type' => ['sometimes', 'string', Rule::in(['remote_talent', 'managed_services'])],
             'is_active' => ['sometimes', 'boolean'],
             'inclusions' => ['sometimes', 'nullable', 'array'],
             'inclusions.*' => ['required', 'string', 'max:255'],
